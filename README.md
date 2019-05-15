@@ -12,7 +12,7 @@ A simple UNIX shell written in Python 3.
 
 - Common `^C` (ignoring current input and start again), `^D` (exit or logout) shortcuts are supported.
 
-- Arrow keys are support. You can press them to see the input history.
+- Arrow keys are supported. You can press them to see the input history.
 
 ## Known Defects
 
