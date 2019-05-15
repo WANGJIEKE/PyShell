@@ -19,15 +19,7 @@ class PyShell(cmd.Cmd):
         super(PyShell, self).__init__()
         self.intro = '==== Welcome to PyShell ===='
         self.prompt = f'{getpass.getuser()}@{socket.gethostname()}:{os.getcwd().replace(os.environ["HOME"], "~")}$ '
-        self.background_jobs = []
-
-    def preloop(self):
-        super(PyShell, self).preloop()
-        while True:
-            try:
-                os.waitpid(-1, os.WNOHANG)
-            except ChildProcessError:
-                break
+        self.jobs = []
 
     def cmdloop(self, intro=None):
         while True:
@@ -38,38 +30,15 @@ class PyShell(cmd.Cmd):
                 self.intro = ''
                 continue
 
-    def do_fg(self, arg_str: str) -> None:
+    def do_fg(self, _: str) -> None:
         """usage: fg [pid]
         bring the most recent background job to foreground"""
-        if len(self.background_jobs) == 0:
-            print('fg: no background job running')
-            return
-        if len(arg_str) > 0:
-            args = arg_str.split(' ')
-            if len(args) > 1:
-                print('fg: too many arguments', file=sys.stderr)
-                return
-            try:
-                os.waitpid(int(args[0]), 0)
-            except ValueError:
-                print('fg: invalid pid', file=sys.stderr)
-                return
-        else:
-            for pid in self.background_jobs[-1]:
-                try:
-                    os.waitpid(pid, 0)
-                except ChildProcessError:
-                    pass
-            self.background_jobs.pop()
+        print('fg: not implemented yet')
 
-    def do_jobs(self, arg_str: str) -> None:
+    def do_jobs(self, _: str) -> None:
         """usage: jobs
         list all background jobs"""
-        if len(arg_str) > 0:
-            print('jobs: too many arguments', file=sys.stderr)
-            return
-        for i in range(len(self.background_jobs)):
-            print(f'[{i}] pid(s): {self.background_jobs[i]}', file=sys.stderr)
+        print('jobs: not implemented yet')
 
     def do_exit(self, arg_str: str) -> None:
         """usage: exit [exitcode]"""
@@ -123,8 +92,16 @@ class PyShell(cmd.Cmd):
         children_pids = []
         new_fds, old_fds = [], []
 
-        if not is_foreground:
-            args_list[-1].pop()
+        if not is_foreground:  # background support not implemented
+            while True:
+                _input = input('pysh: background process not implement yet. Rerun on foreground? [y/n]')
+                if _input == 'y':
+                    args_list[-1].pop()
+                    break
+                elif _input == 'n':
+                    return
+                else:
+                    print('\tenter only "y" or "n"')
 
         def _clean_up(error: OSError) -> None:
             map(lambda _pid: os.kill(_pid, signal.SIGKILL), children_pids)
@@ -168,14 +145,16 @@ class PyShell(cmd.Cmd):
                         old_fds = new_fds
 
             if is_foreground:
+                self.jobs.append(('fg', children_pids))
                 try:
                     for i in children_pids:
                         os.waitpid(i, 0)
+                    self.jobs.pop()
                 except ChildProcessError:
                     pass
             else:
-                self.background_jobs.append(children_pids)
-                print(f'[{len(self.background_jobs) - 1}] new job added')
+                self.jobs.append(('bg', children_pids))
+                print(f'[{len(self.jobs) - 1}] new job added')
 
         except OSError as e:
             _clean_up(e)
