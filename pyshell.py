@@ -111,14 +111,14 @@ class PyShell(cmd.Cmd):
         """handler for undocumented inputs"""
         commands = shlex.split(line)
 
-        self.pipe_handler(
+        self.main_function(
             [list(command)
              for is_pipe_operator, command in itertools.groupby(commands, lambda word: word == '|')
              if not is_pipe_operator],
             '&' not in commands
         )
 
-    def pipe_handler(self, args_list: [[str]], is_foreground=True) -> None:
+    def main_function(self, args_list: [[str]], is_foreground=True) -> None:
         """handler for multiple piping"""
         children_pids = []
         new_fds, old_fds = [], []
