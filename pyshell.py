@@ -97,7 +97,7 @@ class PyShell(cmd.Cmd):
                 _input = input('pysh: background process not implement yet. Rerun on foreground? [y/n] ')
                 if _input == 'y':
                     args_list[-1].pop()
-                    is_foreground = False
+                    is_foreground = True
                     break
                 elif _input == 'n':
                     return
