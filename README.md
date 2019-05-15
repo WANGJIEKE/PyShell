@@ -6,8 +6,6 @@ A simple UNIX shell written in Python 3.
 
 ## Features
 
-- "Background" process.
-
 - Redirection, piping, and their common combinations.
 
 - Common `^C` (ignoring current input and start again), `^D` (exit or logout) shortcuts are supported.
@@ -16,7 +14,7 @@ A simple UNIX shell written in Python 3.
 
 ## Known Defects
 
-- The background process is not the TRUE background process. The "background" process will "fight" with the shell on the inputs in `sys.stdin`.
+- "Background job" feature is incomplete.
 
 - When using redirection and an error occurs, the error message may be also redirected into the file.
 
