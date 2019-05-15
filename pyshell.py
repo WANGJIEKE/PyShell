@@ -88,20 +88,20 @@ class PyShell(cmd.Cmd):
         )
 
     def main_function(self, args_list: [[str]], is_foreground=True) -> None:
-        """handler for multiple piping"""
+        """handler for command execution"""
         children_pids = []
         new_fds, old_fds = [], []
 
         if not is_foreground:  # background support not implemented
             while True:
-                _input = input('pysh: background process not implement yet. Rerun on foreground? [y/n]')
+                _input = input('pysh: background process not implement yet. Rerun on foreground? [y/n] ')
                 if _input == 'y':
                     args_list[-1].pop()
                     break
                 elif _input == 'n':
                     return
                 else:
-                    print('\tenter only "y" or "n"')
+                    print('\tenter either "y" or "n"')
 
         def _clean_up(error: OSError) -> None:
             map(lambda _pid: os.kill(_pid, signal.SIGKILL), children_pids)
