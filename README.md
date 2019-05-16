@@ -16,6 +16,6 @@ A simple UNIX shell written in Python 3.
 
 - "Background job" feature is incomplete.
 
-- When using redirection and an error occurs, the error message may be also redirected into the file.
+- ~~When using redirection and an error occurs, the error message may be also redirected into the file.~~
 
 - Auto complete is not supported.
