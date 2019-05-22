@@ -14,11 +14,23 @@ import sys
 
 
 class PyShell(cmd.Cmd):
+    @staticmethod
+    def home_abbr_to_full(abbr_path: str) -> str:
+        if abbr_path.startswith('~'):
+            abbr_path = abbr_path.replace('~', os.environ['HOME'], 1)
+        return abbr_path
+    
+    @staticmethod
+    def full_to_home_abbr(full_path: str) -> str:
+        if full_path.startswith(os.environ['HOME']):
+            full_path = full_path.replace(os.environ['HOME'], '~', 1)
+        return full_path
+
     def __init__(self):
         """initialize PyShell object"""
         super(PyShell, self).__init__()
         self.intro = '==== Welcome to PyShell ===='
-        self.prompt = f'{getpass.getuser()}@{socket.gethostname()}:{os.getcwd().replace(os.environ["HOME"], "~")}$ '
+        self.prompt = f'{getpass.getuser()}@{socket.gethostname()}:{PyShell.full_to_home_abbr(os.getcwd())}$ '
         self.jobs = []
 
     def cmdloop(self, intro=None):
@@ -63,13 +75,13 @@ class PyShell(cmd.Cmd):
             if len(args) == 0 or args[0] == '':
                 os.chdir(os.environ['HOME'])
             else:
-                os.chdir(args[0].replace('~', os.environ['HOME']))
+                os.chdir(PyShell.home_abbr_to_full(args[0]))
         except FileNotFoundError:
             print('cd: invalid path', file=sys.stderr)
         except NotADirectoryError:
             print('cd: not a directory', file=sys.stderr)
         else:
-            self.prompt = f'{getpass.getuser()}@{socket.gethostname()}:{os.getcwd().replace(os.environ["HOME"], "~")}$ '
+            self.prompt = f'{getpass.getuser()}@{socket.gethostname()}:{PyShell.full_to_home_abbr(os.getcwd())}$ '
 
     def do_EOF(self, _: str) -> None:
         """EOF handler; equivalent to type exit"""
