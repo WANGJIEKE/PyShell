@@ -42,7 +42,7 @@ class PyShell(cmd.Cmd):
 
     def do_exit(self, arg_str: str) -> None:
         """usage: exit [exitcode]"""
-        args = arg_str.split(' ')
+        args = shlex.split(arg_str)
         if len(args) > 1:
             print('exit: too many arguments', file=sys.stderr)
             return
@@ -55,7 +55,7 @@ class PyShell(cmd.Cmd):
 
     def do_cd(self, arg_str: str) -> None:
         """usage: cd target_path"""
-        args = arg_str.split(' ')
+        args = shlex.split(arg_str)
         if len(args) > 1:
             print('cd: too many arguments', file=sys.stderr)
             return
