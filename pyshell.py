@@ -46,7 +46,7 @@ class PyShell(cmd.Cmd):
         if len(args) > 1:
             print('exit: too many arguments', file=sys.stderr)
             return
-        if args[0] == '':
+        if len(args) == 0 or args[0] == '':
             exit(0)
         try:
             exit(int(args[0]))
@@ -60,7 +60,7 @@ class PyShell(cmd.Cmd):
             print('cd: too many arguments', file=sys.stderr)
             return
         try:
-            if args[0] == '':
+            if len(args) == 0 or args[0] == '':
                 os.chdir(os.environ['HOME'])
             else:
                 os.chdir(args[0].replace('~', os.environ['HOME']))
